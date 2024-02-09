@@ -1,0 +1,29 @@
+.vertical-table {
+  .table-heading th {
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+    font-size: 16px;
+    font-weight: 500;
+    background: #EEEEEE;
+    transform: rotate(180deg);
+    &:first-child {
+      writing-mode: unset;
+      background: unset;
+      transform: unset;
+    }
+  }
+  .table-data {
+    th {
+      border: 1px solid rgba(224, 224, 224, 1);
+      font-size: 14px;
+      color: #440E66;
+      font-weight: 500;
+    }
+    td {
+      border: 1px solid rgba(224, 224, 224, 1); 
+      font-size: 14px;
+      color: #616161;
+      font-weight: 500;
+    }
+  }
+}
