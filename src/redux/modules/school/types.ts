@@ -13,7 +13,10 @@ import {
     UPDATE_SCHOOL_FALIURE,
     CHECK__SCHOOL_EMAIL_REQUEST,
     CHECK__SCHOOL_EMAIL_FALIURE,
-    CHECK_SCHOOL_EMAIL_SUCCESS
+    CHECK_SCHOOL_EMAIL_SUCCESS,
+    CHECK__USERID_REQUEST,
+    CHECK_USERID_SUCCESS,
+    CHECK__USERID_FALIURE
 } from "./actionTypes";
 
 // GET School
@@ -86,6 +89,22 @@ export interface CheckEmailFailureType {
     type: typeof CHECK__SCHOOL_EMAIL_FALIURE;
     payload: string;
 }
+
+
+export interface CheckUserIdRequestType {
+    type: typeof CHECK__USERID_REQUEST,
+    payload:object;
+
+}
+export interface CheckUserIdSuccessType {
+    type: typeof CHECK_USERID_SUCCESS;
+    payload: string;
+}
+export interface CheckUserIdFailureType {
+    type: typeof CHECK__USERID_FALIURE;
+    payload: string;
+}
+
 export type AuthActions =
     | FetchschoolsDataRequest
     | FetchschoolsDataSuccess
@@ -102,3 +121,6 @@ export type AuthActions =
     | CheckEmailRequestType
     | CheckEmailSuccessType
     | CheckEmailFailureType
+    | CheckUserIdRequestType
+    | CheckUserIdSuccessType
+    | CheckUserIdFailureType

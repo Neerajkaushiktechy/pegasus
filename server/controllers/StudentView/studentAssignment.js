@@ -2,6 +2,7 @@ const Assignment = require("../../database/models/assignment");
 const AssessmentTool = require("../../database/models/assessmentTool");
 const AssessmentGroupTool = require("../../database/models/assessmentGroup");
 const StudentAssignmentStatus = require("../../database/models/studentAssignmentStatus");
+const SubmittedCustomForm = require("../../database/models/submittedCustomForm")
 const Patient = require("../../database/models/patientDemographic");
 const Users = require("../../database/models/user");
 const CustomFrom = require("../../database/models/customForm");
@@ -9,7 +10,11 @@ const mongoose = require('mongoose')
 
 
 exports.getMyAssignment = async (req, res) => {
+  const pageNmuber = parseInt(req.query.pageNumber) || 1
+  const limit = parseInt(req.query.limit)
+  const skip_no = parseInt(pageNmuber - 1) * limit;
   try {
+    let countDocuments = 0;
     const assignment = await Assignment.find({
       students: req.params.studentId,
       $or: [
@@ -27,14 +32,20 @@ exports.getMyAssignment = async (req, res) => {
         model: Patient,
         select: 'fName lName',
       }).sort({ createdAt: -1 });
-
+    let allData = await StudentAssignmentStatus.find({
+      studentId: req.params.studentId,
+      $or: [
+        { isDeleted: false },
+        { isDeleted: null }
+      ]
+    })
     const myAssignment = await StudentAssignmentStatus.find({
       studentId: req.params.studentId,
       $or: [
         { isDeleted: false },
         { isDeleted: null }
       ]
-    }).populate('assessmentId')
+    }).skip(skip_no).limit(limit).populate('assessmentId')
       .populate({
         path: 'createdBy',
         model: Users,
@@ -46,6 +57,8 @@ exports.getMyAssignment = async (req, res) => {
         select: 'fName lName',
       }).sort({ createdAt: -1 });
 
+    countDocuments = allData.length;
+
     if (!assignment) {
       return res.status(404).json({
         success: false,
@@ -55,7 +68,7 @@ exports.getMyAssignment = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: 'Assignment fetched successfully',
-      data: assignment, myAssignment
+      data: assignment, myAssignment, totalCount: countDocuments, totalPages: Math.ceil(countDocuments / limit)
     });
   } catch (error) {
     console.error('Error while fetching assignment', error);
@@ -184,7 +197,9 @@ exports.myCustomAssignmentForm = async (req, res) => {
   try {
     let data;
     if (req.params.name) {
-      data = await CustomFrom.findOne({ formName: req.params.name });
+      // data = await CustomFrom.findOne({ formName: req.params.name });
+      const decodedName = decodeURIComponent(req.params.name);
+      data = await CustomFrom.findOne({ formName: decodedName });
     }
     if (!data) {
       return res
@@ -204,13 +219,25 @@ exports.myCustomAssignmentForm = async (req, res) => {
 
 
 exports.getMyGrades = async (req, res) => {
+  const pageNmuber = parseInt(req.query.pageNumber) || 1
+  const limit = parseInt(req.query.limit)
+  const skip_no = parseInt(pageNmuber - 1) * limit;
   try {
+    let countDocuments = 0;
+    let allData = await StudentAssignmentStatus.find({
+      studentId: req.params.studentId, $or: [
+        { isDeleted: false },
+        { isDeleted: null }
+      ]
+    })
     const myAssignment = await StudentAssignmentStatus.find({
       studentId: req.params.studentId, $or: [
         { isDeleted: false },
         { isDeleted: null }
       ]
-    }).populate('assessmentId').sort({ createdAt: -1 });
+    }).skip(skip_no).limit(limit).populate('assessmentId').sort({ createdAt: -1 });
+
+    countDocuments = allData.length;
 
     if (!myAssignment) {
       return res.status(404).json({
@@ -221,7 +248,7 @@ exports.getMyGrades = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: 'Assignment fetched successfully',
-      data: myAssignment
+      data: myAssignment, totalCount: countDocuments, totalPages: Math.ceil(countDocuments / limit)
     });
   } catch (error) {
     console.error('Error while fetching assignment', error);
@@ -250,3 +277,25 @@ exports.updateAssignmnetDate = async (req, res) => {
     });
   }
 };
+
+exports.resetAssignment = async (req, res) => {
+  console.log("inside")
+  try {
+    if (!req.params.assId) {
+      return res.status(400).json({ success: false, message: "data not found" });
+    }
+    let { assId, stdId, submitAssId } = req.params;
+
+    // Update StudentAssignmentStatus
+    await StudentAssignmentStatus.findByIdAndUpdate(submitAssId, { $set: { grade: "", submittedTime: "", status: 0 } });
+    // Check if the document exists before attempting to delete it
+    const submittedForm = await SubmittedCustomForm.findOne({ assignmentId: assId, createdBy: stdId });
+    if (submittedForm) {
+      await SubmittedCustomForm.deleteOne({ assignmentId: assId, createdBy: stdId });
+    }
+    return res.status(200).json({ success: true, message: "Assignment reset successfully" });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ success: false, message: "There is some error please try again later" });
+  }
+}

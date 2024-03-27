@@ -24,7 +24,7 @@ const schema = new mongoose.Schema({
         default: 0
     },
     grade: {
-        type: Number,
+        type: String,
         trim: true
     },
     comment: {

@@ -47,7 +47,7 @@ const attachSocketIO = (io) => {
 };
 app.use(attachSocketIO(io));
 app.use((req, res, next) => {
-  if ((req.method === "POST" || req.method === "PUT") && req.is('application/json')) {
+  if ((req.method === "POST" || (req.method === "PUT") && !req.url.includes("resetAssignment")) && req.is('application/json')) {
     if (!req.body.params) {
       res.status(404).json({ success: false });
     }
@@ -77,8 +77,8 @@ app.use((req, res, next) => {
     }
   }
   else {
-   //return res.status(401).json({ sucess: false, message: "Token is required" });
-   next();
+    //return res.status(401).json({ sucess: false, message: "Token is required" });
+    next();
   }
 });
 

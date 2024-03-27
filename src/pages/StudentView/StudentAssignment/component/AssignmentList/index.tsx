@@ -1,16 +1,17 @@
 import TableList from "../../../../../components/Dashboard/TableList";
-import { Stack, TableRow, Tooltip, Typography, Zoom, styled } from '@mui/material';
+import { Stack, TableRow, Tooltip, Typography, Zoom, styled, Pagination, Box } from '@mui/material';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { useEffect, useState } from "react";
 import Loader from "../../../../../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchMyAssignmentDataRequest, fetchMyGradesDataRequest } from "../../../../../redux/modules/studentView/myAssignments/action";
+import { fetchMyAssignmentDataRequest, fetchMyGradesDataRequest, resetUpdateMyassignmentStatus } from "../../../../../redux/modules/studentView/myAssignments/action";
 import { clearDialouge } from "../../../../../redux/modules/patients/daignosis/action";
 import DialogBox from "../../../../../components/DialogBox";
 import { encrypt } from "../../../../..//utils/encryptDecrypt";
 import { getUserId, getRole } from "../../../../../utils/commonUtil";
 import { assert } from "console";
+import { resetMyassignmentData } from "../../../../../redux/modules/studentView/myAssignments/reducer";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -33,6 +34,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function MyAssignmentList() {
+    const [pagenumber, setPageNumber] = useState(1);
+    const [limit, setLimit] = useState(30)
     let { id } = useParams();
     let studentId: any = id
     let navigate = useNavigate();
@@ -47,26 +50,35 @@ export default function MyAssignmentList() {
             : ["Assignment Title", "Assigned Date", "Submitted Date", "Module", "Total Duration(HH:MM)", "Time Taken", "Status"];
 
     let dispatch = useDispatch();
-    let { getMyAssignmentData, diagnosis, getMyGradesData } = useSelector((state: any) => {
-        let { getMyAssignmentData, diagnosis, getMyGradesData
+    let { getMyAssignmentData, diagnosis, getMyGradesData, updateMyAssignmentStatus } = useSelector((state: any) => {
+        let { getMyAssignmentData, diagnosis, getMyGradesData, updateMyAssignmentStatus
         } = state;
-        return { getMyAssignmentData, diagnosis, getMyGradesData }
+        return { getMyAssignmentData, diagnosis, getMyGradesData, updateMyAssignmentStatus }
     })
 
     useEffect(() => {
         if (getRole() === 1 || getRole() === 3) {
             let studentId: any = id
-            dispatch(fetchMyAssignmentDataRequest({ studentId: atob(studentId) }))
-            dispatch(fetchMyGradesDataRequest({ studentId: atob(studentId) }))
+            dispatch(fetchMyAssignmentDataRequest({ studentId: atob(studentId), pagenumber, limit, }))
+            dispatch(fetchMyGradesDataRequest({ studentId: atob(studentId), pagenumber, limit, }))
         }
-        else {
+        else if (getRole() === 2) {
+            dispatch(resetMyassignmentData())
             let studentId = getUserId()
-            dispatch(fetchMyAssignmentDataRequest({ studentId: studentId }))
+            if (updateMyAssignmentStatus?.data?.success === true) {
+                setTimeout(() => {
+                    dispatch(fetchMyAssignmentDataRequest({ studentId: studentId, pagenumber, limit, }))
+                }, 3000);
+                dispatch(resetUpdateMyassignmentStatus())
+            }
+            else {
+                dispatch(fetchMyAssignmentDataRequest({ studentId: studentId, pagenumber, limit, }))
+            }
         }
         if (diagnosis?.message != "") {
             setDialouge({ show: true, message: diagnosis?.message })
         }
-    }, [])
+    }, [dispatch, pagenumber])
 
     useEffect(() => {
         if (getMyAssignmentData?.data?.myAssignment) {
@@ -195,6 +207,11 @@ export default function MyAssignmentList() {
                 </TableList>
 
             </>
+            {getMyAssignmentData?.data?.totalPages > 1 &&
+                <Box textAlign="center" mt="40px">
+                    <Pagination count={getMyAssignmentData?.data?.totalPages} color="secondary" shape="rounded" page={pagenumber} sx={{ display: "inline-block" }} onChange={(event: any, page: any) => setPageNumber(page)} />
+                </Box>
+            }
             <DialogBox buttonIcon={showDialouge.message === "There is some error please try again later" || showDialouge.message === "Please fill required fields" ? "error" : ""} openDialog={showDialouge.show} handleSubmit={handleCloseDialog} title={showDialouge.message} buttonText="Ok" />
         </>
     )

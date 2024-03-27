@@ -13,7 +13,10 @@ import {
   UPDATE_SCHOOL_SUCCESS,
   CHECK__SCHOOL_EMAIL_REQUEST,
   CHECK__SCHOOL_EMAIL_FALIURE,
-  CHECK_SCHOOL_EMAIL_SUCCESS
+  CHECK_SCHOOL_EMAIL_SUCCESS,
+  CHECK__USERID_REQUEST,
+  CHECK_USERID_SUCCESS,
+  CHECK__USERID_FALIURE
 } from "./actionTypes";
 import { AuthActions } from "./types";
 
@@ -151,6 +154,34 @@ export function checkSchoolEmail(state = { initialState }, action: AuthActions) 
         error: null,
       };
     case CHECK__SCHOOL_EMAIL_FALIURE:
+      return {
+        ...state,
+        loading: false,
+        data: {},
+        error: action.payload,
+      };
+    default:
+      return {
+        ...state,
+      };
+  }
+};
+
+export function checkSchoolUserId(state = { initialState }, action: AuthActions) {
+  switch (action.type) {
+    case CHECK__USERID_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+    case CHECK_USERID_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        data: action.payload,
+        error: null,
+      };
+    case CHECK__USERID_FALIURE:
       return {
         ...state,
         loading: false,

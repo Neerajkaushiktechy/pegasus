@@ -1,5 +1,5 @@
 import TableList from "../../components/Dashboard/TableList";
-import { Stack, TableRow, Typography, styled, Box } from '@mui/material';
+import { Stack, TableRow, Typography, styled, Box, Pagination } from '@mui/material';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { useEffect, useState } from "react";
 import Loader from "../../components/Loader";
@@ -30,6 +30,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function StudentGrades() {
+    const [pagenumber, setPageNumber] = useState(1);
+    const [limit, setLimit] = useState(30)
     let tableHead = ["Assignment Title", "Assigned Date", "Submitted Date", "Total Duration", "Time Taken", "Grades"]
     let dispatch = useDispatch();
     let { getMyGradesData } = useSelector((state: any) => {
@@ -40,10 +42,11 @@ export default function StudentGrades() {
 
     useEffect(() => {
         let studentId = getUserId()
-        dispatch(fetchMyGradesDataRequest({ studentId: studentId }))
-    }, [dispatch])
+        dispatch(fetchMyGradesDataRequest({ studentId: studentId, pagenumber, limit, }))
+    }, [dispatch, pagenumber])
 
     const getGrade = (item: any) => {
+        console.log(item, "item")
         if (item >= 60 && (item !== null || item !== undefined)) {
             return (<StyledTableCell align="center" sx={{
                 color: "#04d504", minInlineSize: "-webkit-fill-available",
@@ -129,9 +132,12 @@ export default function StudentGrades() {
                                     }
                                     placement="left-start"
                                     arrow >
-                                    <span style={{ display: "flex", justifyContent: "center" }}>
-                                        {getGrade(item.grade)}
+                                    <span style={{
+                                        display: "flex", justifyContent: "center", fontWeight: "400", fontSize: "14px", padding: "16px"
+                                    }}>
+                                        {item.grade === "" ? "Not Yet" : getGrade(Math.round(item.grade))}
                                     </span>
+
                                 </Tooltip>
                             </StyledTableRow>
                         ))
@@ -142,6 +148,11 @@ export default function StudentGrades() {
                             </StyledTableCell>
                         </StyledTableRow>}
                 </TableList >
+                {getMyGradesData?.data?.totalPages > 1 &&
+                    <Box textAlign="center" mt="40px">
+                        <Pagination count={getMyGradesData?.data?.totalPages} color="secondary" shape="rounded" page={pagenumber} sx={{ display: "inline-block" }} onChange={(event: any, page: any) => setPageNumber(page)} />
+                    </Box>
+                }
             </>
         </>
     )

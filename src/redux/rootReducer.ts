@@ -25,14 +25,14 @@ import { getDepartments } from './modules/students/department/reducer'
 import { getCourses } from './modules/students/course/reducer'
 import { poststudent ,getStudent ,deleteStudent ,updateStudent ,checkEmail } from './modules/students/student/reducer'
 
-import { getPatientInformationData } from "./modules/patients/patientInformation/reducer";
+import { getPatientInformationData,getPatientVitalsData } from "./modules/patients/patientInformation/reducer";
 import { postSocial,getSocial,updateSocial } from "./modules/patients/socialHistory/reducer";
-import { postschool ,getSchool , updateSchool , deleteSchool , checkSchoolEmail } from './modules/school/reducer';
+import { postschool ,getSchool , updateSchool , deleteSchool , checkSchoolEmail , checkSchoolUserId} from './modules/school/reducer';
 import { getAssessment,postAssessment,deleteAssessment,updateAssessment , getAssessmentType , postAssessmentType } from './modules/setting/assessmentTool/reducer';
 import { getAssessmentGroup,postAssessmentGroup,deleteAssessmentGroup,updateAssessmentGroup } from "./modules/setting/assessmentGroup/reducer";
 import { getAssignment,postAssignment,deleteAssignment,updateAssignment } from "./modules/assignment/reducer";
 import { getGrading,getFormData,updateGrading } from "./modules/grading/reducer";
-import {getMyAssignmentData, getMyAssignmentDetailData, getMyAssignmentStatusData, postMyAssignmentStatusData, updateMyAssignmentStatus, getMyCustomAssignmentForm, getMyGradesData, updateAssignmentSubmissionDate} from "./modules/studentView/myAssignments/reducer";
+import {getMyAssignmentData, getMyAssignmentDetailData, getMyAssignmentStatusData, postMyAssignmentStatusData, updateMyAssignmentStatus, getMyCustomAssignmentForm, getMyGradesData, updateAssignmentSubmissionDate, resetAssignment} from "./modules/studentView/myAssignments/reducer";
 import { postCustomForm, submitCustomForm } from "./modules/customform/reducer"
 import { getProfile , updateProfile , changePassord } from './modules/profile/reducer'
 import { getNotification , updateNotificationData } from './modules/notification/reducer'
@@ -87,6 +87,7 @@ const rootReducer = combineReducers({
   updateStudent,
   checkEmail,
   getPatientInformationData,
+  getPatientVitalsData,
   postSocial,
   getSocial,
   updateSocial,
@@ -95,6 +96,7 @@ const rootReducer = combineReducers({
   updateSchool,
   deleteSchool,
   checkSchoolEmail,
+  checkSchoolUserId,
   getAssessment,postAssessment,deleteAssessment,updateAssessment,
   getAssessmentGroup,postAssessmentGroup,deleteAssessmentGroup,updateAssessmentGroup,
   schoolLoginReducer,
@@ -111,6 +113,7 @@ const rootReducer = combineReducers({
   getMyCustomAssignmentForm,
   getMyGradesData,
   updateAssignmentSubmissionDate,
+  resetAssignment,
   postCustomForm,
   submitCustomForm,
   getAssessmentType,

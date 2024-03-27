@@ -1,5 +1,5 @@
 import { call, put, takeLatest } from "redux-saga/effects";
-import {GET_MYASSIGNMENT_REQUEST, GET_MYASSIGNMENTDETAILS_REQUEST, GET_MYASSIGNMENTSTATUS_REQUEST, POST_MYASSIGNMENTSTATUS_REQUEST, UPDATE_MYASSIGNMENTSTATUS_REQUEST, GET_MYCUSTOMASSIGNMENTFORM_REQUEST, GET_MYGRADES_REQUEST,UPDATE_ASSIGNMENTSUBMISSIONDATE_REQUEST} from "./actionTypes";
+import {GET_MYASSIGNMENT_REQUEST, GET_MYASSIGNMENTDETAILS_REQUEST, GET_MYASSIGNMENTSTATUS_REQUEST, POST_MYASSIGNMENTSTATUS_REQUEST, UPDATE_MYASSIGNMENTSTATUS_REQUEST, GET_MYCUSTOMASSIGNMENTFORM_REQUEST, GET_MYGRADES_REQUEST,UPDATE_ASSIGNMENTSUBMISSIONDATE_REQUEST, RESET_ASSIGNMENT_REQUEST} from "./actionTypes";
 import { API_BASE_URL } from "../../../../utils/globalConstants";
 import {MYASSIGNMENT, MYASSIGNMENTDETAIL,MYASSIGNMENTSTATUS,MYCUSTOMASSIGNMENTFORM, MyGRADES, ASSIGNMENTSUBMISSIONDATE } from "../../../../utils/constants";
 import request from "../../../../utils/request";
@@ -19,7 +19,9 @@ import {
   fetchMyGradesDataSuccess,
   fetchMyGradesDataFailure,
   updateAssignmentSubmissionDateSuccess,
-  updateAssignmentSubmissionDateFailure
+  updateAssignmentSubmissionDateFailure,
+  resetAssignmentSuccess,
+  resetAssignmentFailure
 
 } from "./action";
 import {authToken} from "../../../../utils/commonUtil";
@@ -31,7 +33,7 @@ export function* getMyAssignmentWatcher() {
 }
 function* fetchMyAssignmentDataSaga(action: any): any {
   const{studentId} = action.payload;
-  const requestURL = `${API_BASE_URL}${MYASSIGNMENT}/${studentId}`;
+  const requestURL = `${API_BASE_URL}${MYASSIGNMENT}/${studentId}?&pageNumber=${action.payload.pagenumber}&limit=${action.payload.limit}`;
   let token = authToken();
   const params = {
     method: "GET",
@@ -195,7 +197,7 @@ export function* getMyGradesWatcher() {
 }
 function* fetchMyGradesDataSaga(action: any): any {
   const {studentId} = action.payload
-  const requestURL = `${API_BASE_URL}${MyGRADES}/${studentId}`;
+  const requestURL = `${API_BASE_URL}${MyGRADES}/${studentId}?&pageNumber=${action.payload.pagenumber}&limit=${action.payload.limit}`;
   let token = authToken();
   const params = {
     method: "GET",
@@ -239,6 +241,32 @@ function* updateAssignmentSubmissionDate(action: any): any {
   }
 }
 
-let exportArr = [getMyAssignmentWatcher,getMyAssignmentDetailWatcher, getMyAssignmentStatusWatcher, postMyAssignmentStatusWatcher, updateMyAssignmentStatusWatcher, getMyCustomAssignmentFormWatcher, getMyGradesWatcher, updateAssignmentSubmissionDateWatcher]
+
+export function* resetAssignmentWatcher() {
+  yield takeLatest(RESET_ASSIGNMENT_REQUEST, resetAssignment);
+}
+function* resetAssignment(action: any): any {
+  const requestURL = `${API_BASE_URL}resetAssignment/${action.payload.assId}/${action.payload.stdId}/${action.payload.submitAssId}`;
+  let token = authToken();
+  console.log(requestURL,"url")
+  const params = {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" , ...(token && {token}) },
+  };
+  try {
+    const res = yield call(request, requestURL, params);
+    yield put(
+      resetAssignmentSuccess(res)
+    );
+  } catch (e: any) {
+    yield put(
+      resetAssignmentFailure(e.message)
+    );
+  }
+}
+
+
+
+let exportArr = [getMyAssignmentWatcher,getMyAssignmentDetailWatcher, getMyAssignmentStatusWatcher, postMyAssignmentStatusWatcher, updateMyAssignmentStatusWatcher, getMyCustomAssignmentFormWatcher, getMyGradesWatcher, updateAssignmentSubmissionDateWatcher, resetAssignmentWatcher]
 
 export default exportArr;

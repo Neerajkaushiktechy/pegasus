@@ -10,11 +10,12 @@ import { useNavigate } from "react-router-dom";
 import DialogBox from "../../../components/DialogBox";
 import CloseIcon from "@mui/icons-material/Close";
 import { postcustomFormRequest, submitcustomFormRequest } from "../../../redux/modules/customform/action";
-import { updateMyAssignmentStatusRequest } from "../../../redux/modules/studentView/myAssignments/action";
 import { getAssessmentTypeDataRequest, editCustomName } from "../../../redux/modules/setting/assessmentTool/action";
 import { decrypt } from "../../../utils/encryptDecrypt"
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { resetMyassignmentData, resetUpdateMyassignmentStatus } from "../../../redux/modules/studentView/myAssignments/reducer";
+import { getUserId, getRole } from "../../../utils/commonUtil";
 interface FormProps {
   fields: DynamicFieldData[];
   setfieldsArray?: any;
@@ -38,10 +39,10 @@ interface FormProps {
 export const DynamicFormComponent = ({ fields, setfieldsArray, type, formName, setshow, show, patientId, assessmentId, submittedTime, assignmentId, checkAssignment = false, checkFormType, customFormId, seteditOpenCustomForm, seteditCustomForm, location, copyTemplatePopup }: FormProps) => {
   const formMethods = useForm();
   let dispatch = useDispatch();
-  let { postCustomForm, submitCustomForm } = useSelector((state: any) => {
-    let { postCustomForm, submitCustomForm } = state
+  let { postCustomForm, submitCustomForm, updateMyAssignmentStatus, getMyAssignmentData } = useSelector((state: any) => {
+    let { postCustomForm, submitCustomForm, updateMyAssignmentStatus, getMyAssignmentData } = state
     return {
-      postCustomForm, submitCustomForm
+      postCustomForm, submitCustomForm, updateMyAssignmentStatus, getMyAssignmentData
     }
   })
   let navigate = useNavigate();
@@ -76,12 +77,14 @@ export const DynamicFormComponent = ({ fields, setfieldsArray, type, formName, s
     }
   }, [postCustomForm])
 
-  useEffect(() => {
-    let status = 2
-    if (submitCustomForm?.data?.success === true) {
-      dispatch(updateMyAssignmentStatusRequest({ status, assessmentId, submittedTime }))
-    }
-  }, [submitCustomForm?.data?.success, dispatch])
+  // useEffect(() => {
+  //   let status = 2
+  //   if (submitCustomForm?.data?.success === true) {
+  //     submitCustomForm.data = submitCustomForm.initialState.data;
+  //     dispatch(updateMyAssignmentStatusRequest({ status, assessmentId, submittedTime }))
+  //   }
+  // }, [submitCustomForm?.data?.success, dispatch, submitCustomForm])
+
 
   useEffect(() => {
     const item = localStorage.getItem("item");
@@ -115,7 +118,9 @@ export const DynamicFormComponent = ({ fields, setfieldsArray, type, formName, s
       patientId: patientId,
       submittedTime: submittedTime,
       assignmentId: assignmentId,
-      studentAssignmentSatusId: assessmentId
+      studentAssignmentSatusId: assessmentId,
+      status: 2,
+      assessmentId: assessmentId,
     }
     if (type === "studentcustomform") {
       await dispatch(submitcustomFormRequest(customFormDataObject))
@@ -136,6 +141,15 @@ export const DynamicFormComponent = ({ fields, setfieldsArray, type, formName, s
   const handleNavigate = async () => {
     await dispatch(editCustomName(null))
     navigate('/studentsAssessment?edit=assessmentList')
+  }
+
+
+  const handleDialogBoxSubmit = () => {
+    if (updateMyAssignmentStatus?.data?.success === true) {
+      setShowAlert({ show: false, title: "" });
+      dispatch(resetMyassignmentData())
+      navigate('/myAssignment')
+    }
   }
   return (
     <>
@@ -211,7 +225,7 @@ export const DynamicFormComponent = ({ fields, setfieldsArray, type, formName, s
           }
         </form>
       </Paper>
-      <DialogBox buttonIcon={showAlert.title === "There is some error please try again later" || showAlert.title === "Please fill required fields" ? "error" : ""} openDialog={showAlert.show} handleSubmit={() => { setShowAlert({ show: false, title: "" }); navigate('/myAssignment') }} title={showAlert.title} buttonText="Ok" />
+      <DialogBox buttonIcon={showAlert.title === "There is some error please try again later" || showAlert.title === "Please fill required fields" ? "error" : ""} openDialog={showAlert.show} handleSubmit={handleDialogBoxSubmit} title={showAlert.title} buttonText="Ok" />
       <DialogBox buttonIcon={"delete"} openDialog={confirmDelete.show} handleSubmit={() => {
         setfieldsArray((prev: any) => {
           let array = { ...prev };

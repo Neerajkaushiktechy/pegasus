@@ -23,7 +23,8 @@ const schema = new mongoose.Schema(
       required: [true, "Date is requied"],
     },
     documentType: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "documentType",
       trim: true,
       required: [true, "DocumentType is requied"],
     },

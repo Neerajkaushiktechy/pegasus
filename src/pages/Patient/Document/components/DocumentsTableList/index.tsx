@@ -81,7 +81,7 @@ export default function FamilyHistoryList() {
             <StyledTableRow key={`${item.createdAt}${index}`}>
               <StyledTableCell component="th" scope="row">{item.date.split("T")[0]}</StyledTableCell>
               <StyledTableCell align="center">{item.name}</StyledTableCell>
-              <StyledTableCell align="center">{item.documentType}</StyledTableCell>
+              <StyledTableCell align="center">{item.documentType?.documentType}</StyledTableCell>
               <StyledTableCell align="center">{item.notes}</StyledTableCell>
               {(getPatientInformationData?.data.Demographic.createdBy === getUserId() || getRoleId() === 1 || DemographicRes?.patientRoleId === userRoleId || getPatientInformationData?.data.Demographic.roleId === 1) &&
                 <StyledTableCell align="center" sx={{ textAlign: "right" }}>

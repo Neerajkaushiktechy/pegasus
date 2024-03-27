@@ -7,7 +7,7 @@ const schema = new mongoose.Schema({
         required: [true, 'Patient Id is requied']
     },
     status: {
-        type: Boolean,
+        type: String,
         trim: true,
         // required: [true, 'Status is requied']
     },

@@ -22,7 +22,12 @@ import {
     GET_MYGRADES_FALIURE,
     UPDATE_ASSIGNMENTSUBMISSIONDATE_REQUEST,
     UPDATE_ASSIGNMENTSUBMISSIONDATE_SUCCESS,
-    UPDATE_ASSIGNMENTSUBMISSIONDATE_FALIURE
+    UPDATE_ASSIGNMENTSUBMISSIONDATE_FALIURE,
+    RESET_MYASSIGNMENTSTATUS_REQUEST,
+    RESET_MYASSIGNMENTDATA_REQUEST,
+    RESET_ASSIGNMENT_REQUEST,
+    RESET_ASSIGNMENT_SUCCESS,
+    RESET_ASSIGNMENT_FALIURE
 } from "./actionTypes";
 import {
      FetchMyAssignmentDataRequest,
@@ -48,7 +53,10 @@ import {
      FetchMyGradesDataFailure,
      UpdateAssignmentSubmissionDateRequest,
      UpdateAssignmentSubmissionDateSuccess,
-     UpdateAssignmentSubmissionDateFailure
+     UpdateAssignmentSubmissionDateFailure,
+     ResetAssignmentRequest,
+     ResetAssignmentSuccess,
+     ResetAssignmentFailure
 } from "./types";
 
 
@@ -71,6 +79,12 @@ export const fetchMyAssignmentDataFailure = (payload: string): FetchMyAssignment
     type: GET_MYASSIGNMENT_FALIURE,
     payload
 })
+
+export const resetMyassignmentData = () => ({
+    type: RESET_MYASSIGNMENTDATA_REQUEST,
+  });
+
+
 
 // GET MyAssignmentDetail
 export const fetchMyAssignmentDetailDataRequest = (payload: any): FetchMyAssignmentDetailDataRequest => ({
@@ -139,6 +153,12 @@ export const updateMyAssignmentStatusFailure = (payload: string): UpdateMyAssign
     payload
 })
 
+export const resetUpdateMyassignmentStatus = () => ({
+    type: RESET_MYASSIGNMENTSTATUS_REQUEST,
+  });
+
+
+
 // GET MyCustom Assignment form
 export const getMyCustomAssignmentFormRequest = (payload: any): GetMyCustomAssignmentFormRequest => ({
     type: GET_MYCUSTOMASSIGNMENTFORM_REQUEST,
@@ -184,5 +204,21 @@ export const updateAssignmentSubmissionDateSuccess = (payload: any): UpdateAssig
 
 export const updateAssignmentSubmissionDateFailure = (payload: string): UpdateAssignmentSubmissionDateFailure => ({
     type: UPDATE_ASSIGNMENTSUBMISSIONDATE_FALIURE,
+    payload
+})
+
+// update My Assignment Submission Date
+export const resetAssignmentRequest = (payload: any): ResetAssignmentRequest => ({
+    type: RESET_ASSIGNMENT_REQUEST,
+    payload,
+});
+
+export const resetAssignmentSuccess = (payload: any): ResetAssignmentSuccess => ({
+    type: RESET_ASSIGNMENT_SUCCESS,
+    payload
+});
+
+export const resetAssignmentFailure = (payload: string): ResetAssignmentFailure => ({
+    type: RESET_ASSIGNMENT_FALIURE,
     payload
 })

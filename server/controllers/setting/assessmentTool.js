@@ -53,7 +53,7 @@ exports.postAssessment = async (req, res) => {
 
 exports.getAssessment = async (req, res) => {
   const pageNmuber = parseInt(req.query.pageNumber) || 1
-  const limit = parseInt(req.query.limit) || 5;
+  const limit = parseInt(req.query.limit)
   const skip_no = parseInt(pageNmuber - 1) * limit;
   try {
     let countDocuments = 0;

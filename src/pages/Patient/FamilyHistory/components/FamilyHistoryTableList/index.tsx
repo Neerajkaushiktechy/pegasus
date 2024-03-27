@@ -86,7 +86,7 @@ export default function FamilyHistoryList() {
               <StyledTableCell align="center">{moment(item.dob)?.format('LL')}</StyledTableCell>
               <StyledTableCell align="center">{item.relation}</StyledTableCell>
               <StyledTableCell align="center">{item.diseaseList[0]?.disease}</StyledTableCell>
-              <StyledTableCell align="center">{item.diseaseList[0]?.diseaseStatus ? "Active" : "Inactive"}</StyledTableCell>
+              <StyledTableCell align="center">{item.diseaseList[0]?.diseaseStatus === "true" ? "Active" : "Inactive"}</StyledTableCell>
               <StyledTableCell align="center">{item.diseaseList[0]?.ageOfDiagnosis}</StyledTableCell>
               {(getPatientInformationData?.data.Demographic.createdBy === getUserId() || getRoleId() === 1 || DemographicRes?.patientRoleId === userRoleId || getPatientInformationData?.data.Demographic.roleId === 1) &&
                 <StyledTableCell align="center" sx={{ textAlign: "right" }}>

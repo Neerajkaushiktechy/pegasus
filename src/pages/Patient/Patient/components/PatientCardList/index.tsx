@@ -52,7 +52,7 @@ export default function PatientCardList({ cardLimit, page, setPage }: props) {
                     <Grid container spacing={4} >
                         {patientsList?.data.map((item: any) => {
                             return (
-                                <Grid key={item._id} item xl={3} lg={6} md={6} sm={6} xs={12}>
+                                <Grid key={item._id} item xl={3} lg={4} md={4} sm={6} xs={12}>
                                     <PatientCard avatar={item.avatar} nameTitle={item.nameTitle} age={item.age} name={`${item.fName} ${item.lName}`} gender={item.gender} id={btoa(item._id)} onClick={onClickCardHandler} createdBy={item.createdBySchoolName} />
                                 </Grid>
                             )
