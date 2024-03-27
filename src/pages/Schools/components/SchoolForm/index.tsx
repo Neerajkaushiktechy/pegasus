@@ -12,7 +12,7 @@ import { useEffect, useState, useContext } from "react";
 import InputMask from 'react-input-mask';
 import closeIcon from "../../../../assets/close.png";
 import { ShowTableDataContext, UpdateDataContext } from "../../../../utils/showHideTabData";
-import { checkEmailRequest, postschoolRequest, updateSchoolRequest } from "../../../../redux/modules/school/action";
+import { checkEmailRequest, postschoolRequest, updateSchoolRequest, checkUserIdRequest } from "../../../../redux/modules/school/action";
 import { useDispatch } from "react-redux";
 import { randomUser_Id } from "../../../../utils/randomGenerator";
 import { useSelector } from "react-redux";
@@ -22,12 +22,13 @@ type props = {
 };
 export const AddSchoolForm = ({ editData }: props) => {
   let dispatch = useDispatch();
-  let { postschool, updateSchool, checkSchoolEmail } = useSelector((state: any) => {
-    let { postschool, updateSchool, checkSchoolEmail } = state;
+  let { postschool, updateSchool, checkSchoolEmail, checkSchoolUserId } = useSelector((state: any) => {
+    let { postschool, updateSchool, checkSchoolEmail, checkSchoolUserId } = state;
     return {
       postschool,
       updateSchool,
-      checkSchoolEmail
+      checkSchoolEmail,
+      checkSchoolUserId
     }
   })
   const { setShowListData, showListData } = useContext(ShowTableDataContext);
@@ -44,7 +45,7 @@ export const AddSchoolForm = ({ editData }: props) => {
     cp_email: "",
     cp_phone: "",
     address: "",
-    user_Id: randomUser_Id(),
+    user_Id: ""
   });
   const [errors, setErrors] = useState([])
   const [email, setEmail] = useState("")
@@ -116,6 +117,10 @@ export const AddSchoolForm = ({ editData }: props) => {
     if (name === "confirmEmail") {
       validateConfirmEmail(value)
     }
+
+    if (name === "user_Id") {
+      dispatch(checkUserIdRequest({ [name]: value.trim() }))
+    }
     setformData((prev) => {
       return {
         ...prev,
@@ -145,7 +150,11 @@ export const AddSchoolForm = ({ editData }: props) => {
     if (checkSchoolEmail?.data?.message !== "") {
       checkSchoolEmail.data = checkSchoolEmail.initialState.data;
     }
+    if (checkSchoolUserId?.data?.message !== "") {
+      checkSchoolUserId.data = checkSchoolUserId.initialState.data;
+    }
   }
+
   return (
     <>
       <div
@@ -380,14 +389,17 @@ export const AddSchoolForm = ({ editData }: props) => {
                   </InputLabel>
                   <Input
                     id="user_Id"
-                    //placeholder="Enter User ID"
-                    disabled
+                    placeholder="Enter User ID"
+                    disabled={editData?._id ? true : false}
                     onChange={handleChangeForm}
                     value={formData.user_Id}
                     name="user_Id"
                     fullWidth
                     disableUnderline
                   />
+                  {
+                    checkSchoolUserId?.data?.type === "user_Id" && checkSchoolUserId?.data?.message !== "" && <p className="error">{checkSchoolUserId?.data?.message}</p>
+                  }
                 </FormControl>
               </Grid>
               {

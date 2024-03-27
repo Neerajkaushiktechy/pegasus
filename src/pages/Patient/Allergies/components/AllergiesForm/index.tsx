@@ -267,9 +267,9 @@ export default function AllergiesFrom({ editData, patientId, assessmentId, submi
                               }}
                               value={formData?.status}
                            >
-                              <FormControlLabel value={true} control={<Radio />} label="Active" />
-                              <FormControlLabel value={false} control={<Radio />} label="Inactive" />
-                              <FormControlLabel value={false} control={<Radio />} label="Unspecified" />
+                              <FormControlLabel value={"true"} control={<Radio />} label="Active" />
+                              <FormControlLabel value={"false"} control={<Radio />} label="Inactive" />
+                              <FormControlLabel value={"Unspecified"} control={<Radio />} label="Unspecified" />
                            </RadioGroup>
                         </FormControl>
                      </Grid>

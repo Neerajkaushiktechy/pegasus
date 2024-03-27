@@ -106,7 +106,7 @@ exports.addStudent = async (req, res) => {
 
 exports.getStudent = async (req, res) => {
   const pageNmuber = parseInt(req.query.pageNumber) || 1
-  const limit = parseInt(req.query.limit) || 5;
+  const limit = parseInt(req.query.limit)
   const skip_no = parseInt(pageNmuber - 1) * limit;
   let checkStudent = req.createdById === undefined ? { isDeleted: false, roleId: 2 } : req.roleId === 3 ? {
     isDeleted: false,
@@ -220,7 +220,7 @@ exports.deleteStudent = async (req, res) => {
 exports.checkEmail = async (req, res) => {
   try {
     let { email } = req.body
-    let emailExist = await Student.findOne({ email });
+    let emailExist = await Student.findOne({ email, isDeleted: "false" });
     if (emailExist) {
       return res.json({
         success: true,

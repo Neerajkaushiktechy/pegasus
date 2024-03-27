@@ -12,5 +12,6 @@ router.put("/myAssignmentStatus/:id", StudentAssignmentController.updateMyAssign
 router.get("/myCustomAssignmentForm/:name", StudentAssignmentController.myCustomAssignmentForm);
 router.get("/myGrades/:studentId", StudentAssignmentController.getMyGrades);
 router.put("/updateAssignmnetSubmissionDate/:id", StudentAssignmentController.updateAssignmnetDate);
+router.put("/resetAssignment/:assId/:stdId/:submitAssId", StudentAssignmentController.resetAssignment);
 
 module.exports = router;

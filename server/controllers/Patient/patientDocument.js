@@ -40,7 +40,8 @@ exports.getDocument = async (req, res) => {
   try {
     let data;
     if (req.params.id) {
-      data = await PatientDocument.find({ pId: req.params.id, isDeleted: false });
+      data = await PatientDocument.find({ pId: req.params.id, isDeleted: false }).populate("documentType");
+      console.log(data, "data")
     } else {
       data = await PatientDocument.find({ isDeleted: false });
     }

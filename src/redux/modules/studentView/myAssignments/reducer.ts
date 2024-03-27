@@ -22,7 +22,12 @@ import {
   GET_MYGRADES_FALIURE,
   UPDATE_ASSIGNMENTSUBMISSIONDATE_REQUEST,
   UPDATE_ASSIGNMENTSUBMISSIONDATE_SUCCESS,
-  UPDATE_ASSIGNMENTSUBMISSIONDATE_FALIURE
+  UPDATE_ASSIGNMENTSUBMISSIONDATE_FALIURE,
+  RESET_MYASSIGNMENTSTATUS_REQUEST,
+  RESET_MYASSIGNMENTDATA_REQUEST,
+  RESET_ASSIGNMENT_REQUEST,
+  RESET_ASSIGNMENT_SUCCESS,
+  RESET_ASSIGNMENT_FALIURE
 } from "./actionTypes";
 import { AuthActions } from "./types";
 
@@ -55,12 +60,24 @@ export function getMyAssignmentData(state = { initialState }, action: AuthAction
         data: [],
         error: action.payload,
       };
+      case RESET_MYASSIGNMENTDATA_REQUEST:
+        return {
+          ...state,
+          loading : true,
+          data: {}, // Reset data to an empty object
+        };
     default:
       return {
         ...state,
       };
   }
 };
+
+export function resetMyassignmentData() {
+  return {
+    type: RESET_MYASSIGNMENTDATA_REQUEST,
+  };
+}
 
 export function getMyAssignmentDetailData(state = { initialState }, action: AuthActions) {
   switch (action.type) {
@@ -167,12 +184,22 @@ export function updateMyAssignmentStatus(state = { initialState }, action: AuthA
         data: {},
         error: action.payload,
       };
+      case RESET_MYASSIGNMENTSTATUS_REQUEST:
+        return {
+          ...state,
+          data: {}, // Reset data to an empty object
+        };
     default:
       return {
         ...state,
       };
   }
 };
+export function resetUpdateMyassignmentStatus() {
+  return {
+    type: RESET_MYASSIGNMENTSTATUS_REQUEST,
+  };
+}
 
 
 export function getMyCustomAssignmentForm(state = { initialState }, action: AuthActions) {
@@ -246,6 +273,34 @@ export function updateAssignmentSubmissionDate(state = { initialState }, action:
         error: null,
       };
     case UPDATE_ASSIGNMENTSUBMISSIONDATE_FALIURE:
+      return {
+        ...state,
+        loading: false,
+        data: {},
+        error: action.payload,
+      };
+    default:
+      return {
+        ...state,
+      };
+  }
+};
+
+export function resetAssignment(state = { initialState }, action: AuthActions) {
+  switch (action.type) {
+    case RESET_ASSIGNMENT_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+    case RESET_ASSIGNMENT_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        data: action.payload,
+        error: null,
+      };
+    case RESET_ASSIGNMENT_FALIURE:
       return {
         ...state,
         loading: false,

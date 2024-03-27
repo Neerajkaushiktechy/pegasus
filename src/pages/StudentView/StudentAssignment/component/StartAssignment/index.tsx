@@ -104,7 +104,8 @@ export default function StartAssignment({ avatar }: props) {
     useEffect(() => {
         const assessmentTypes = getMyAssignmentDetailData?.data?.data.map((item: any) => item.assessmentId.assesmentType?.assessmentName)
         if (assessmentTypes !== undefined && stopwatchTimeString != undefined && (assessmentTypes[0] !== "Allergies" || assessmentTypes[0] !== "Vitals" || assessmentTypes[0] !== "Documents" || assessmentTypes[0] !== "Family History" || assessmentTypes[0] !== "Social History" || assessmentTypes[0] !== "Diagnosis" || assessmentTypes[0] !== "Medication" || assessmentTypes[0] !== "Nursing Care Plan" || assessmentTypes[0] !== "Nurse Notes" || assessmentTypes[0] !== "Laboratory" || assessmentTypes[0] !== "Therapy" || assessmentTypes[0] !== "Doctor Orders" || assessmentTypes[0] !== "Prosthetics/Aids")) {
-            dispatch(getMyCustomAssignmentFormRequest(assessmentTypes[0]))
+            dispatch(getMyCustomAssignmentFormRequest(encodeURIComponent(assessmentTypes[0])));
+
         }
     }, [patientid, assignmentId, getMyAssignmentDetailData?.data?.success, dispatch]);
 

@@ -111,6 +111,9 @@ export default function MedicationFrom({ editData, patientId, submittedTime, ass
    }, [submittedTime]);
 
    useEffect(() => {
+      if (editData !== null) {
+         dispatch(getMedicationMedicineRequest(editData.medicine));
+      }
       if (DemographicRes?.pId) {
          setFormData((prevalue) => {
             if (editData?._id) {

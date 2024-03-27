@@ -28,7 +28,13 @@ export default function Grading() {
     const [pagenumber, setPageNumber] = useState(1);
     const [limit, setLimit] = useState(20)
 
+    let { getGrading, resetAssignment } = useSelector((state: any) => {
+        let { getGrading, resetAssignment } = state;
+        return { getGrading, resetAssignment }
+    })
+
     useEffect(() => {
+        console.log(resetAssignment?.data?.success, "sucess")
         let debouncing: string | number | NodeJS.Timeout | undefined;
         if (searchText !== "") {
             debouncing = window.setTimeout(() => {
@@ -40,13 +46,9 @@ export default function Grading() {
         }
 
         return () => clearTimeout(debouncing)
-    }, [searchText, dispatch, showList, searchType, pagenumber]);
+    }, [searchText, dispatch, showList, searchType, pagenumber, resetAssignment?.data?.success === true]);
 
 
-    let { getGrading } = useSelector((state: any) => {
-        let { getGrading } = state;
-        return { getGrading }
-    })
 
     if (getGrading?.loading && searchText === "") {
         return <Loader />

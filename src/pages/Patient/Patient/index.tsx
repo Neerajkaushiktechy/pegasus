@@ -21,7 +21,7 @@ export default function Patient() {
         let { getDemographic } = state;
         return { getDemographic }
     });
-    let cardLimit = toggleView === true ? 8 : 25;
+    let cardLimit = toggleView === true ? 20 : 25;
 
     useEffect(() => {
         dispatch(getDemographicRequest({ limit: cardLimit, search: searchText, searchType: searchType, skip: page * cardLimit - cardLimit }));

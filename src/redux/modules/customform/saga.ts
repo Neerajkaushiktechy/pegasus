@@ -1,5 +1,6 @@
 import { call, put, takeLatest } from "redux-saga/effects";
 import { CREATE_CUSTOM_FORM_REQUEST, SUBMIT_CUSTOM_FORM_REQUEST } from "./actionTypes";
+import {updateMyAssignmentStatusRequest} from "../studentView/myAssignments/action"
 import { API_BASE_URL } from "../../../utils/globalConstants";
 import request from "../../../utils/request";
 import {
@@ -42,6 +43,10 @@ export function* submitCustomFormWatcher() {
 }
 
 function* submitCustomFormSaga(action: any): any {
+  console.log(action.payload,"payload")
+  let status = action.payload.status
+  let assessmentId = action.payload.assessmentId
+  let submittedTime = action.payload.submittedTime
   const requestURL = `${API_BASE_URL}${SUBMITCUSTOMFORM}`;
   let token = authToken();
   const params = {
@@ -54,6 +59,11 @@ function* submitCustomFormSaga(action: any): any {
     yield put(
       submitcustomFormRequestSuccess(res)
     );
+    if (res.success){
+      yield put(
+        updateMyAssignmentStatusRequest({status, assessmentId, submittedTime} )
+      )
+    }
   } catch (e: any) {
     yield put(
       submitcustomFormRequestFaliure(e)

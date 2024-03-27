@@ -1,9 +1,15 @@
-import { Box, IconButton, Stack, Paper, Table, TableContainer, TableHead, TableRow, Typography, styled, TableBody, TextField, InputAdornment } from '@mui/material';
+import { Box, IconButton, Stack, Paper, Table, TableContainer, TableHead, TableRow, Typography, styled, TableBody, TextField, InputAdornment, Tooltip } from '@mui/material';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import { useState } from "react";
+import { ResetAssignmentRequest } from '../../../../redux/modules/studentView/myAssignments/types';
+import { useDispatch } from 'react-redux';
+import { useEffect, useState } from "react";
 import EditIcon from '@mui/icons-material/Edit';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { useSelector } from "react-redux";
 import DialogBox from '../../../../components/DialogBox';
+import { resetAssignment } from '../../../../redux/modules/studentView/myAssignments/reducer';
+import { resetAssignmentRequest } from '../../../../redux/modules/studentView/myAssignments/action';
+import { getDataRequest } from '../../../../redux/modules/assignment/action';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -31,19 +37,27 @@ type props = {
 }
 
 export default function CheckAssessmentList({ setShowList, setAssignmentData }: props) {
+  let dispatch = useDispatch()
   let tableHead = ["Assignment Title", "Assignment Type", "Created By", "Student name", "Total Time(HH:MM)", "Total Time Taken", "grade", "status", "Action"]
-  let { getGrading } = useSelector((state: any) => {
-    let { getGrading } = state;
-    return { getGrading }
+  let { getGrading, resetAssignment } = useSelector((state: any) => {
+    let { getGrading, resetAssignment } = state;
+    return { getGrading, resetAssignment }
   })
-
   let [showAlert, setShowAlert] = useState({
     show: false,
     title: "",
     success: true
   });
 
+  useEffect(() => {
+    if (resetAssignment?.data?.success === true) {
+      delete resetAssignment.data
+    }
+  }, [])
 
+  const onClickReset = (assId: any, submitAssId: any, stdId: any) => {
+    dispatch(resetAssignmentRequest({ assId: assId, submitAssId: submitAssId, stdId: stdId }))
+  }
 
   return (
     <>
@@ -72,12 +86,27 @@ export default function CheckAssessmentList({ setShowList, setAssignmentData }: 
                   <StyledTableCell align="center">{item?.submittedTime}</StyledTableCell>
                   {/* <StyledTableCell align="center">{item?.grade}{item?.grade && "%"}</StyledTableCell> */}
                   <StyledTableCell align="center">{item?.grade && `${Math.round(item.grade)}%`} </StyledTableCell>
-                  <StyledTableCell align="center"><Box sx={{ ...(item?.status === 0 && { bgcolor: '#fff' }), ...(item?.status === 1 && { bgcolor: 'warning.light' }), ...(item?.status === 2 && { bgcolor: 'success.light' }), ...((item?.status === 0 && new Date(item?.endDate) < new Date()) && { bgcolor: 'error.light' }), m: "0 auto", width: 15, height: 15, borderRadius: '50%', border: '1px solid #757575' }} /></StyledTableCell>
+                  <StyledTableCell align="center"><Box sx={{
+                    ...(item?.status === 0 && { bgcolor: '#fff' }), ...(item?.status === 1 && { bgcolor: 'warning.light' }), ...(item?.status === 2 && { bgcolor: 'success.light' }), ...((item?.status === 0 || item?.status === 1) &&
+                      item?.endDate &&
+                      new Date(item.endDate).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0) &&
+                      { bgcolor: 'error.light' }
+                    ), m: "0 auto", width: 15, height: 15, borderRadius: '50%', border: '1px solid #757575'
+                  }} /></StyledTableCell>
                   <StyledTableCell align="right">
                     {item?.status === 2 &&
-                      <IconButton sx={{ color: "#017BAC" }} onClick={() => { setAssignmentData({ id: item?._id, assignmentId: item?.assignmentId?._id, assignmentGrade: item?.grade, assignmentComment: item?.comment, assignmentType: item?.assessmentId?.assesmentType, studentId: item?.studentId?._id, patientDetail: item?.assignmentId?.patient }); setShowList(false) }}>
-                        <EditIcon />
-                      </IconButton>
+                      <>
+                        <Tooltip title="Edit">
+                          <IconButton sx={{ color: "#017BAC" }} onClick={() => { setAssignmentData({ id: item?._id, assignmentId: item?.assignmentId?._id, assignmentGrade: item?.grade, assignmentComment: item?.comment, assignmentType: item?.assessmentId?.assesmentType, studentId: item?.studentId?._id, patientDetail: item?.assignmentId?.patient }); setShowList(false) }}>
+                            <EditIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Reset Assignment">
+                          <IconButton onClick={() => onClickReset(item?.assignmentId._id, item?._id, item?.studentId?._id)}>
+                            <RestartAltIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </>
                     }
                   </StyledTableCell>
                 </StyledTableRow>

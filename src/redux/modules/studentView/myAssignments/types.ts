@@ -22,7 +22,16 @@ import {
     GET_MYGRADES_FALIURE,
     UPDATE_ASSIGNMENTSUBMISSIONDATE_REQUEST,
     UPDATE_ASSIGNMENTSUBMISSIONDATE_SUCCESS,
-    UPDATE_ASSIGNMENTSUBMISSIONDATE_FALIURE
+    UPDATE_ASSIGNMENTSUBMISSIONDATE_FALIURE,
+    RESET_MYASSIGNMENTSTATUS_REQUEST,
+    RESET_MYASSIGNMENTSTATUS_SUCCESS,
+    RESET_MYASSIGNMENTSTATUS_FALIURE,
+    RESET_MYASSIGNMENTDATA_REQUEST,
+    RESET_MYASSIGNMENTDATA_SUCCESS,
+    RESET_MYASSIGNMENTDATA_FALIURE,
+    RESET_ASSIGNMENT_REQUEST,
+    RESET_ASSIGNMENT_SUCCESS,
+    RESET_ASSIGNMENT_FALIURE
 } from "./actionTypes"
 
 
@@ -37,6 +46,20 @@ export interface FetchMyAssignmentDataSuccess {
 }
 export interface FetchMyAssignmentDataFailure {
     type: typeof GET_MYASSIGNMENT_FALIURE;
+    payload: string;
+}
+
+// Reset  MyAssignment Data
+export interface ResetMyAssignmentDataRequest {
+    type: typeof RESET_MYASSIGNMENTDATA_REQUEST,
+    payload: any;
+}
+export interface ResetMyAssignmentDataSuccess {
+    type: typeof RESET_MYASSIGNMENTDATA_SUCCESS;
+    payload: any;
+}
+export interface ResetMyAssignmentDataFailure {
+    type: typeof RESET_MYASSIGNMENTDATA_FALIURE;
     payload: string;
 }
 
@@ -98,6 +121,21 @@ export interface UpdateMyAssignmentStatusFailure {
     payload: string;
 }
 
+
+// Reset  MyAssignment Status
+export interface ResetMyAssignmentStatusRequest {
+    type: typeof RESET_MYASSIGNMENTSTATUS_REQUEST,
+    payload: any;
+}
+export interface ResetMyAssignmentStatusSuccess {
+    type: typeof RESET_MYASSIGNMENTSTATUS_SUCCESS;
+    payload: any;
+}
+export interface ResetMyAssignmentStatusFailure {
+    type: typeof RESET_MYASSIGNMENTSTATUS_FALIURE;
+    payload: string;
+}
+
 // GET MyCustom Assignment form
 export interface GetMyCustomAssignmentFormRequest {
     type: typeof GET_MYCUSTOMASSIGNMENTFORM_REQUEST,
@@ -140,6 +178,21 @@ export interface UpdateAssignmentSubmissionDateFailure {
     payload: string;
 }
 
+
+// Reset  Assignment 
+export interface ResetAssignmentRequest {
+    type: typeof RESET_ASSIGNMENT_REQUEST,
+    payload: any;
+}
+export interface ResetAssignmentSuccess {
+    type: typeof RESET_ASSIGNMENT_SUCCESS;
+    payload: any;
+}
+export interface ResetAssignmentFailure {
+    type: typeof RESET_ASSIGNMENT_FALIURE;
+    payload: string;
+}
+
 export type AuthActions =
     | FetchMyAssignmentDataRequest
     | FetchMyAssignmentDataSuccess
@@ -165,3 +218,12 @@ export type AuthActions =
     | UpdateAssignmentSubmissionDateRequest
     | UpdateAssignmentSubmissionDateSuccess
     | UpdateAssignmentSubmissionDateFailure
+    |ResetMyAssignmentStatusSuccess
+    |ResetMyAssignmentStatusRequest
+    |ResetMyAssignmentStatusFailure
+    | ResetMyAssignmentDataRequest
+    | ResetMyAssignmentDataFailure
+    |ResetMyAssignmentDataSuccess
+    |ResetAssignmentRequest
+    | ResetAssignmentSuccess
+    | ResetAssignmentFailure

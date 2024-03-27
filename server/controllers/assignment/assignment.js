@@ -62,30 +62,64 @@ exports.postAssignment = async (req, res) => {
         }
       }
     }
-    else if (assessmentType === "Group") {
-      const groupList = await AssessmentGroup.find({ _id: { $in: newData?.assessmentGroupList } })
-      for (var i = 0; i < groupList.length; i++) {
-        for (var k = 0; k < groupList[i]?.assessmentList.length; k++)
-          for (var j = 0; j < newData.students.length; j++) {
-            for (var l = 0; l < newData.assessmentGroupList.length; l++) {
-              //send notification to student
-              await notificationController.notificationService(newData.students[j], newData._id, groupList[i]?.assessmentList[k], req)
-              let savedAssignment = await new StudentAssignmentStatus({
-                type: "Group",
-                studentId: newData.students[j],
-                assessmentId: groupList[i]?.assessmentList[k],
-                // assignmentId :mongoose.Schema.Types.ObjectId(newData._id)
-                assessmentGroupId: newData.assessmentGroupList[l],
-                assignmentId: newData._id,
-                patient: patient,
-                createdBy: req.userId,
-                endDate: endDate
-              })
-              await savedAssignment.save()
-            }
+    // else if (assessmentType === "Group") {
+    //   const groupList = await AssessmentGroup.find({ _id: { $in: newData?.assessmentGroupList } })
+    //   for (var i = 0; i < groupList.length; i++) {
+    //     for (var k = 0; k < groupList[i]?.assessmentList.length; k++)
+    //       for (var j = 0; j < newData.students.length; j++) {
+    //         for (var l = 0; l < newData.assessmentGroupList.length; l++) {
+    //           //send notification to student
+    //           await notificationController.notificationService(newData.students[j], newData._id, groupList[i]?.assessmentList[k], req)
+    //           let savedAssignment = await new StudentAssignmentStatus({
+    //             type: "Group",
+    //             studentId: newData.students[j],
+    //             assessmentId: groupList[i]?.assessmentList[k],
+    //             // assignmentId :mongoose.Schema.Types.ObjectId(newData._id)
+    //             assessmentGroupId: newData.assessmentGroupList[l],
+    //             assignmentId: newData._id,
+    //             patient: patient,
+    //             createdBy: req.userId,
+    //             endDate: endDate
+    //           })
+    //           await savedAssignment.save()
+    //         }
+    //       }
+    //   }
+    // }
+
+    if (assessmentType === "Group") {
+      const groupList = await AssessmentGroup.find({ _id: { $in: newData?.assessmentGroupList } });
+
+      for (let i = 0; i < groupList.length; i++) {
+        const group = groupList[i];
+        const assessments = group.assessmentList;
+
+        for (let j = 0; j < assessments.length; j++) {
+          const assessment = assessments[j];
+
+          for (let k = 0; k < newData.students.length; k++) {
+            const studentId = newData.students[k];
+
+            //send notification to student
+            await notificationController.notificationService(studentId, newData._id, assessment, req);
+
+            // Save StudentAssignmentStatus
+            const savedAssignment = await new StudentAssignmentStatus({
+              type: "Group",
+              studentId,
+              assessmentId: assessment,
+              assessmentGroupId: group._id,
+              assignmentId: newData._id,
+              patient: patient,
+              createdBy: req.userId,
+              endDate: endDate
+            }).save();
           }
+        }
       }
     }
+
+
     //send notification to student
     for (var i = 0; i < newData.students.length; i++) {
       await notificationController.notificationService(newData.students[i], newData._id, req)
@@ -225,7 +259,7 @@ exports.postAssignment = async (req, res) => {
 
 exports.getAssignment = async (req, res) => {
   const pageNumber = parseInt(req.query.pageNumber) || 1
-  const limit = parseInt(req.query.limit) || 20;
+  const limit = parseInt(req.query.limit)
   const skip_no = parseInt(pageNumber - 1) * limit;
   let matchCondition = {
     isDeleted: false
@@ -400,6 +434,10 @@ exports.updateAssignment = async (req, res) => {
       patient,
       endDate
     });
+
+    await StudentAssignmentStatus.updateMany({ assignmentId: req.params.id }, {
+      endDate
+    })
     return res.status(200).json({ success: true, message: "Data is Updated" });
   } catch (error) {
     console.log(error);

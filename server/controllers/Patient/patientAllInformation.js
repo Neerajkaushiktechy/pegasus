@@ -85,7 +85,7 @@ exports.getAllData = async (req, res) => {
 exports.getVitalData = async (req, res) => {
   try {
     const vitalData = await PatientsVitals.findOne(
-      { createdBy: req.userId, pId: req.params.id }
+      { pId: req.params.id }
     )
       .sort({ updatedAt: -1 })
       .limit(1)

@@ -87,7 +87,8 @@ export default function AllergiesTableList() {
               <StyledTableCell align="center">{item.severities}</StyledTableCell>
               <StyledTableCell align="center">{item.reaction}</StyledTableCell>
               <StyledTableCell align="center">{moment(item.dateOnset).format('LLL')}</StyledTableCell>
-              <StyledTableCell align="center">{item.status ? "Active" : "Inactive"}</StyledTableCell>
+              <StyledTableCell align="center">{item.status === "true" ? "Active" : item.status === "false" ? "Inactive" : "Unspecified"}</StyledTableCell>
+
               {(getPatientInformationData?.data.Demographic.createdBy === getUserId() || getRoleId() === 1 || DemographicRes?.patientRoleId === userRoleId || getPatientInformationData?.data.Demographic.roleId === 1) &&
                 <StyledTableCell align="center" sx={{ textAlign: "right" }}>
                   {/* {((userRoleId === 1 || userRoleId === item?.roleId) && item?.roleId !== 2) ? <> */}

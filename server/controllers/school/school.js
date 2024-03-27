@@ -217,6 +217,7 @@ exports.checkEmail = async (req, res) => {
   try {
     let checkObject = {
       ...req.body,
+      isDeleted: "false"
     }
     let emailExist = await School.findOne(checkObject).select('-password');
     if (emailExist) {
@@ -224,6 +225,30 @@ exports.checkEmail = async (req, res) => {
         success: true,
         type: Object.keys(req.body).toString(),
         message: "Email Already exists",
+      });
+    }
+    return res.status(200).json({
+      success: false,
+      message: "",
+    });
+  }
+  catch (err) {
+    console.log('err', err)
+  }
+}
+
+exports.checkUserId = async (req, res) => {
+  try {
+    let checkObject = {
+      ...req.body,
+      isDeleted: "false",
+    }
+    let emailUserId = await School.findOne(checkObject).select('-password');
+    if (emailUserId) {
+      return res.json({
+        success: true,
+        type: Object.keys(req.body).toString(),
+        message: "UserId Already exists",
       });
     }
     return res.status(200).json({

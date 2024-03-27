@@ -89,14 +89,13 @@ export default function AddDocumnets({ editData, patientId, assessmentId, submit
   let obj = {
     name: "",
     date: "",
-    documentType: "",
     notes: "",
     provider: "",
     file: "",
     onlyView: false,
-    ...editData
+    ...editData,
+    documentType: editData?.documentType._id,
   }
-
   useEffect(() => {
     fileFormData.set('submittedTime', submittedTime || '');
     fileFormData.set('assignmentId', assignmentId || '');

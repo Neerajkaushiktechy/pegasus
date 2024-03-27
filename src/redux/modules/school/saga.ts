@@ -1,5 +1,5 @@
 import { call, put, takeLatest } from "redux-saga/effects";
-import { POST_SCHOOL_REQUEST, GET_SCHOOL_REQUEST, UPDATE_SCHOOL_REQUEST, DELETE_SCHOOL_REQUEST , CHECK__SCHOOL_EMAIL_REQUEST } from "./actionTypes";
+import { POST_SCHOOL_REQUEST, GET_SCHOOL_REQUEST, UPDATE_SCHOOL_REQUEST, DELETE_SCHOOL_REQUEST , CHECK__SCHOOL_EMAIL_REQUEST, CHECK__USERID_REQUEST } from "./actionTypes";
 import { API_BASE_URL } from "../../../utils/globalConstants";
 import request from "../../../utils/request";
 import {
@@ -12,7 +12,9 @@ import {
   updateSchoolFailure,
   updateSchooltSuccess,
   checkEmailSuccess,
-  checkEmailFailure
+  checkEmailFailure,
+  checkUserIdFailure,
+  checkUserIdSuccess
 } from './action'
 import {  CHECK_EMAIL, SCHOOL } from "../../../utils/constants";
 import { encrypt } from "../../../utils/encryptDecrypt";
@@ -145,6 +147,33 @@ function* postEmailSaga(action: any): any {
   }
 }
 
-let exportArr = [getSchooltWatcher, postSchoolWatcher, updateSchoolWatcher , deleteSchoolWatcher,postemailWatcher ]
+
+// check userId already exists
+export function* postUserIdWatcher() {
+  yield takeLatest(CHECK__USERID_REQUEST, postUserIdSaga);
+}
+
+function* postUserIdSaga(action: any): any {
+  const requestURL = `${API_BASE_URL}${SCHOOL}/checkUserId`;
+  let token = authToken();
+  const params = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" , ...(token && {token})},
+    body: JSON.stringify({ params: encrypt(JSON.stringify(action.payload)) }),
+  };
+  try {
+    const res = yield call(request, requestURL, params);
+    yield put(
+      checkUserIdSuccess(res)
+    );
+  } catch (e: any) {
+    yield put(
+      checkUserIdFailure(e.status)
+    );
+  }
+}
+
+
+let exportArr = [getSchooltWatcher, postSchoolWatcher, updateSchoolWatcher , deleteSchoolWatcher,postemailWatcher, postUserIdWatcher ]
 
 export default exportArr;
