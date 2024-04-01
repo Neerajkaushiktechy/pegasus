@@ -79,7 +79,7 @@ exports.getFamilyHistory = async (req, res) => {
       },
       {
         $lookup: {
-          from: 'familyhistorytypes',
+          from: 'familyHistoryTypes',
           localField: 'relationObjectId',
           foreignField: '_id',
           as: 'relationDetails'
