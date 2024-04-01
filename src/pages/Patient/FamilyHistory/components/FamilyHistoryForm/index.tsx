@@ -323,7 +323,7 @@ export default function FamilyHistoryFrom({ editData, patientId, assessmentId, s
                                     updateData(e);
                                  }}
                                  value={formData?.fName}
-                                 sx={{ paddingLeft: "60px" }}
+                                 sx={{ paddingLeft: "80px" }}
                               />
 
                            </FormControl>
@@ -335,7 +335,7 @@ export default function FamilyHistoryFrom({ editData, patientId, assessmentId, s
                               value={formData?.nameTitle}
                               displayEmpty
                               inputProps={{ 'aria-label': 'Without label' }}
-                              style={{ border: "0", marginTop: "0 !important", position: "absolute", bottom: "2px", left: "0px", background: "#fff" }}
+                              style={{ marginTop: "0 !important", position: "absolute", bottom: "2px", left: "2px", background: "#fff", width: "90px" }}
                            >
                               <MenuItem value="Mr.">Mr.</MenuItem>
                               <MenuItem value="Mrs.">Mrs.</MenuItem>
