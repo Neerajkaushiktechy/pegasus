@@ -275,7 +275,7 @@ const LogInPage: React.FC = () => {
                 <Box className="LoginInputContainer">
                   <Box className="LoginInputs">
                     <Typography marginBottom={2} fontWeight={800}>
-                      School ID
+                      User ID
                     </Typography>
                     <TextField
                       onChange={(newValue) =>
@@ -283,14 +283,14 @@ const LogInPage: React.FC = () => {
                           ...prevState,
                           schoolId: newValue.target.value,
                         }))}
-                      label="Enter School ID"
+                      label="Enter School User ID"
                       value={formData.schoolId}
                       fullWidth
                     />
                   </Box>
                   <Box className="LoginInputs">
                     <Typography marginBottom={2} fontWeight={800}>
-                      Email ID
+                      Email
                     </Typography>
                     <TextField
                       onChange={(newValue) =>
@@ -298,7 +298,7 @@ const LogInPage: React.FC = () => {
                           ...prevState,
                           email: newValue.target.value,
                         }))}
-                      label="Enter Email ID"
+                      label="Enter Email"
                       value={formData.email}
                       fullWidth
                     />
