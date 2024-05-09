@@ -6,7 +6,9 @@ import {
     TextField,
     Button,
     Typography,
-    Card
+    Card,
+    InputAdornment,
+    IconButton
 } from "@mui/material";
 // import "../../style.scss";
 import plus from "../../../../../assets/plus.png";
@@ -18,6 +20,8 @@ import { Link } from "react-router-dom";
 import { decrypt, encrypt } from "../../../../../utils/encryptDecrypt";
 import { changePasswordRequest } from "../../../../../redux/modules/auth/actions";
 import DialogBox from "../../../../../components/DialogBox";
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 var CryptoJS = require("crypto-js");
 const ResetPassword: React.FC = () => {
     let params = useParams();
@@ -41,6 +45,9 @@ const ResetPassword: React.FC = () => {
         confirm_password: "",
         error: null
     })
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     useEffect(() => {
         if (changePasswordReducer?.signIn) {
             let message;
@@ -83,6 +90,13 @@ const ResetPassword: React.FC = () => {
         }
         dispatch(changePasswordRequest(data))
     }
+    const handleTogglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+    const handleToggleConfirmPasswordVisibility = () => {
+        setShowConfirmPassword(!showConfirmPassword);
+    };
+
 
     return (
         <>
@@ -106,15 +120,37 @@ const ResetPassword: React.FC = () => {
                         <Typography marginBottom={2} fontWeight={800}>
                             Password
                         </Typography>
-                        <TextField value={formData.password} onChange={handleChange} label="Enter Password" name="password" type="password" fullWidth
-                        />
+                        <TextField value={formData.password} onChange={handleChange} label="Enter Password" name="password" type={showPassword ? 'text' : 'password'} fullWidth
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            onClick={handleTogglePasswordVisibility}
+                                            edge="end"
+                                        >
+                                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }} />
                     </Box>
                     <Box className="LoginInputs">
                         <Typography marginBottom={2} fontWeight={800}>
                             Confirm password
                         </Typography>
-                        <TextField value={formData.confirm_password} onChange={handleChange} label="Enter Confirm password" name="confirm_password" type="password" fullWidth
-                        />
+                        <TextField value={formData.confirm_password} onChange={handleChange} label="Enter Confirm password" name="confirm_password" type={showConfirmPassword ? 'text' : 'password'} fullWidth
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            onClick={handleToggleConfirmPasswordVisibility}
+                                            edge="end"
+                                        >
+                                            {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }} />
                     </Box>
                     <Box className="LoginActionContainer" marginBottom={2}>
                         <Button

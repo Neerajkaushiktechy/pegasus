@@ -307,12 +307,25 @@ const LogInPage: React.FC = () => {
                     <Typography marginBottom={2} fontWeight={800}>
                       Password
                     </Typography>
-                    <TextField label="Enter Password" type="password" fullWidth value={formData.password}
+                    <TextField label="Enter Password" type={showPassword ? 'text' : 'password'} fullWidth value={formData.password}
                       onChange={(newValue) =>
                         setFormData((prevState) => ({
                           ...prevState,
                           password: newValue.target.value,
-                        }))} />
+                        }))}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={handleTogglePasswordVisibility}
+                              edge="end"
+                            >
+                              {showPassword ? <Visibility /> : <VisibilityOff />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
                   </Box>
                 </Box> : null
           }
