@@ -251,7 +251,7 @@ const LogInPage: React.FC = () => {
                   <Typography marginBottom={2} fontWeight={800}>
                     Password
                   </Typography>
-                  <TextField label="Enter Password" type={showPassword ? 'text' : 'password'} fullWidth value={formData.password}
+                  <TextField sx={{ backgroundColor: "rgb(232, 240, 254)" }} label="Enter Password" type={showPassword ? 'text' : 'password'} fullWidth value={formData.password}
                     onChange={(newValue) =>
                       setFormData((prevState) => ({
                         ...prevState,
@@ -307,7 +307,7 @@ const LogInPage: React.FC = () => {
                     <Typography marginBottom={2} fontWeight={800}>
                       Password
                     </Typography>
-                    <TextField label="Enter Password" type={showPassword ? 'text' : 'password'} fullWidth value={formData.password}
+                    <TextField sx={{ backgroundColor: "rgb(232, 240, 254)" }} label="Enter Password" type={showPassword ? 'text' : 'password'} fullWidth value={formData.password}
                       onChange={(newValue) =>
                         setFormData((prevState) => ({
                           ...prevState,
