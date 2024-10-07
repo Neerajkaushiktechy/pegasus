@@ -48,7 +48,7 @@ export default function HowItWorks() {
             <Item>
               <img src={iconNurse} alt="icon" style={{ marginBottom: "30px" }} />
               <Typography component="h3" variant="h3" sx={{ fontSize: "20px", color: "#000", fontWeight: "500" }}>
-                CEU’s for Nurses
+                CEUs for Nurses
               </Typography>
             </Item>
           </Grid>

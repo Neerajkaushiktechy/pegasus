@@ -54,6 +54,7 @@ export const DynamicFormComponent = ({ fields, setfieldsArray, type, formName, s
     id: ""
   });
   const [roleId, setRoleId] = useState(undefined)
+  const [currentQuestIndex, setQuestIndex] = useState(0)
   const {
     handleSubmit, reset,
     formState: { isSubmitting, errors }
@@ -145,7 +146,7 @@ export const DynamicFormComponent = ({ fields, setfieldsArray, type, formName, s
             {!checkAssignment &&
               <div style={{ paddingBottom: "10px" }}>
                 <Stack p={2} direction="row" justifyContent="space-between" alignItems="center" spacing={2} bgcolor="primary.light" sx={{ padding: "6px 20px" }}>
-                  <Typography>{formName}</Typography>
+                  <Typography>{formName} {fields?.length ? `- Total Questions ${fields.length}`  :  ""}</Typography>
                   {
                     show &&
                     <IconButton
@@ -157,29 +158,60 @@ export const DynamicFormComponent = ({ fields, setfieldsArray, type, formName, s
                 </Stack>
               </div>
             }
-            {fields?.map((d, i) => (
-              <Grid key={i} container spacing={2} pr={5} pl={5}>
-                <Grid item xs={12} sx={{ ...(checkAssignment && { pointerEvents: "none" }) }}>
+            
+            {fields?.length > 0 && 
+              <Grid container spacing={2} pr={5} pl={5} pt={5}>
+                {checkAssignment ? 
+                  fields?.map((ques)=>(
+                  <Grid item xs={12} sx={{ ...(checkAssignment && { pointerEvents: "none" }) }}>
+                    <FormControl className="right_side_wrapper" variant="standard" fullWidth required={roleId === 2 ? true : false}>
+                      <FormLabel sx={{ marginBottom: "16px", fontSize: "20px", color: "#rgba(39,30,74,0.9)", fontWeight: "400", }} component="legend" required={roleId === 2 ? true : false}>
+                        Q{currentQuestIndex +  1 } :- {ques.label}
+                        {type === "studentcustomform" ? <></> : customFormId !== "" && !show && (
+                          <>
+                            <IconButton sx={{ color: "#017BAC" }} onClick={(e) => { seteditOpenCustomForm(); seteditCustomForm(ques) }}>
+                              <EditIcon />
+                            </IconButton>
+                            <IconButton sx={{ color: "#C53E4E" }} onClick={() => { setConfirmDelete({ show: true, id: ques.id }) }}>
+                              <DeleteIcon />
+                            </IconButton>
+                          </>
+                        )}
+                      </FormLabel >
+                      <DynamicControl {...ques} show={show} checkFormType={checkFormType} />
+                    </FormControl>
+                    <ErrorMessage errors={errors} name={ques.fieldName} />
+                  </Grid>
+                  ))
+                : 
+                <Grid item xs={12} sx={{ ...(checkAssignment ? { pointerEvents: "none" } :{}) }}>
+                  
                   <FormControl className="right_side_wrapper" variant="standard" fullWidth required={roleId === 2 ? true : false}>
                     <FormLabel sx={{ marginBottom: "16px", fontSize: "20px", color: "#rgba(39,30,74,0.9)", fontWeight: "400", }} component="legend" required={roleId === 2 ? true : false}>
-                      {d.label}
+                    Q{currentQuestIndex +  1 } :- {fields[currentQuestIndex].label}
                       {type === "studentcustomform" ? <></> : customFormId !== "" && !show && (
                         <>
-                          <IconButton sx={{ color: "#017BAC" }} onClick={(e) => { seteditOpenCustomForm(); seteditCustomForm(d) }}>
+                          <IconButton sx={{ color: "#017BAC" }} onClick={(e) => { seteditOpenCustomForm(); seteditCustomForm(fields[currentQuestIndex]) }}>
                             <EditIcon />
                           </IconButton>
-                          <IconButton sx={{ color: "#C53E4E" }} onClick={() => { setConfirmDelete({ show: true, id: d.id }) }}>
+                          <IconButton sx={{ color: "#C53E4E" }} onClick={() => { setConfirmDelete({ show: true, id: fields[currentQuestIndex].id }) }}>
                             <DeleteIcon />
                           </IconButton>
                         </>
                       )}
                     </FormLabel >
-                    <DynamicControl {...d} show={show} checkFormType={checkFormType} />
+                    <DynamicControl {...fields[currentQuestIndex]} show={show} checkFormType={checkFormType} />
                   </FormControl>
-                  <ErrorMessage errors={errors} name={d.fieldName} />
-                </Grid>
+                  <ErrorMessage errors={errors} name={fields[currentQuestIndex].fieldName} />
+                  <Box>
+                    <Button onClick={() => setQuestIndex(currentQuestIndex + 1)} disabled={currentQuestIndex===fields.length -1 } sx={{ mr: "20px" }} variant="contained" color="primary">
+                      Next Ques
+                    </Button>
+                  </Box>
+                </Grid> 
+                }
               </Grid>
-            ))}
+            }
           </FormProvider>
           {!checkAssignment && fields?.length > 0 && !show &&
             <Box mt="50px" textAlign="right" pb="18px">
@@ -200,10 +232,10 @@ export const DynamicFormComponent = ({ fields, setfieldsArray, type, formName, s
                     </Button>
                   </>
               }
-              {patientId ?
-                <Button onClick={() => reset()} sx={{ mr: "20px" }} variant="contained" color="secondary">
+              {/* {patientId ?
+                <Button onClick={() => {setQuestIndex(0); reset()}} sx={{ mr: "20px" }} variant="contained" color="secondary">
                   Reset
-                </Button> : null}
+                </Button> : null} */}
               <Button type="submit" sx={{ mr: "20px" }} variant="contained" color="secondary">
                 {customFormId !== "" && customFormId !== undefined ? "Update" : "Save"}
               </Button>

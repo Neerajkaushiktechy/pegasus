@@ -1,6 +1,6 @@
 import { Box, Grid, Typography, Link as MuiLink, Container, List, ListItem, ListItemButton, Button } from "@mui/material";
 import { Link } from "react-router-dom";
-import logofooter from "../../assets/pegasus-logo1.png";
+import logofooter from "../../assets/logo-footer.png";
 const footers = [
    {
       title: "QUICK LINKS",
@@ -72,7 +72,7 @@ const MainFooter = () => {
                               src={logofooter}
                               alt="logo"
                               style={{
-                                 width: "210px",
+                                 width: "200px",
                                  height: "auto",
                               }}
                            />
