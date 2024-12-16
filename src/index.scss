@@ -555,3 +555,8 @@ footer .MuiLink-root:hover {
   color:#32CD32;
 }
 
+.disabledCell {
+  color: rgba(0, 0, 0, 0.38); /* MUI's disabled text color */
+  pointer-events: none;
+}
+

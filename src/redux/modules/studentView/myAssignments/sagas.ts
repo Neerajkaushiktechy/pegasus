@@ -1,7 +1,7 @@
 import { call, put, takeLatest } from "redux-saga/effects";
-import {GET_MYASSIGNMENT_REQUEST, GET_MYASSIGNMENTDETAILS_REQUEST, GET_MYASSIGNMENTSTATUS_REQUEST, POST_MYASSIGNMENTSTATUS_REQUEST, UPDATE_MYASSIGNMENTSTATUS_REQUEST, GET_MYCUSTOMASSIGNMENTFORM_REQUEST, GET_MYGRADES_REQUEST,UPDATE_ASSIGNMENTSUBMISSIONDATE_REQUEST} from "./actionTypes";
+import { GET_MYASSIGNMENT_REQUEST, GET_MYASSIGNMENTDETAILS_REQUEST, GET_MYASSIGNMENTSTATUS_REQUEST, POST_MYASSIGNMENTSTATUS_REQUEST, UPDATE_MYASSIGNMENTSTATUS_REQUEST, GET_MYCUSTOMASSIGNMENTFORM_REQUEST, GET_MYGRADES_REQUEST, UPDATE_ASSIGNMENTSUBMISSIONDATE_REQUEST } from "./actionTypes";
 import { API_BASE_URL } from "../../../../utils/globalConstants";
-import {MYASSIGNMENT, MYASSIGNMENTDETAIL,MYASSIGNMENTSTATUS,MYCUSTOMASSIGNMENTFORM, MyGRADES, ASSIGNMENTSUBMISSIONDATE } from "../../../../utils/constants";
+import { MYASSIGNMENT, MYASSIGNMENTDETAIL, MYASSIGNMENTSTATUS, MYCUSTOMASSIGNMENTFORM, MyGRADES, ASSIGNMENTSUBMISSIONDATE } from "../../../../utils/constants";
 import request from "../../../../utils/request";
 import {
   fetchMyAssignmentDataSuccess,
@@ -22,7 +22,7 @@ import {
   updateAssignmentSubmissionDateFailure
 
 } from "./action";
-import {authToken} from "../../../../utils/commonUtil";
+import { authToken } from "../../../../utils/commonUtil";
 import { encrypt } from "../../../../utils/encryptDecrypt";
 
 
@@ -30,12 +30,12 @@ export function* getMyAssignmentWatcher() {
   yield takeLatest(GET_MYASSIGNMENT_REQUEST, fetchMyAssignmentDataSaga);
 }
 function* fetchMyAssignmentDataSaga(action: any): any {
-  const{studentId} = action.payload;
+  const { studentId } = action.payload;
   const requestURL = `${API_BASE_URL}${MYASSIGNMENT}/${studentId}`;
   let token = authToken();
   const params = {
     method: "GET",
-    headers: { "Content-Type": "application/json",...(token && {token})},
+    headers: { "Content-Type": "application/json", ...(token && { token }) },
   };
   try {
     const res = yield call(request, requestURL, params);
@@ -58,7 +58,7 @@ function* fetchMyAssignmentDetailDataSaga(action: any): any {
   let token = authToken();
   const params = {
     method: "GET",
-    headers: { "Content-Type": "application/json",...(token && {token})},
+    headers: { "Content-Type": "application/json", ...(token && { token }) },
   };
   try {
     const res = yield call(request, requestURL, params);
@@ -77,22 +77,22 @@ export function* getMyAssignmentStatusWatcher() {
 }
 
 function* fetchMyAssignmentStatusDataSaga(action: any): any {
-  const {statusObj , assObj,studentId} = action.payload
+  const { statusObj, assObj, studentId } = action.payload
   const requestURL = `${API_BASE_URL}${MYASSIGNMENTSTATUS}/${statusObj}`;
   let token = authToken();
   const params = {
     method: "GET",
-    headers: { "Content-Type": "application/json",...(token && {token})},
+    headers: { "Content-Type": "application/json", ...(token && { token }) },
   };
   try {
     const res = yield call(request, requestURL, params);
-    if(res.success){
-      let assId =  res.data[0].assignmentId
+    if (res.success) {
+      let assId = res.data[0].assignmentId
       const requestURL = `${API_BASE_URL}${MYASSIGNMENTDETAIL}/${assObj}/${assId}/${studentId}`;
       let token = authToken();
       const params = {
         method: "GET",
-        headers: { "Content-Type": "application/json",...(token && {token})},
+        headers: { "Content-Type": "application/json", ...(token && { token }) },
       };
       try {
         const res = yield call(request, requestURL, params);
@@ -125,10 +125,10 @@ function* postMyAssignmentStatusDataSaga(action: any): any {
 
   const params = {
     method: "POST",
-    ...(token && {headers : {token}}),
+    ...(token && { headers: { token } }),
     body: action.payload
   };
-  
+
   try {
     const res = yield call(request, requestURL, params);
     yield put(
@@ -146,16 +146,18 @@ export function* updateMyAssignmentStatusWatcher() {
 }
 
 function* updateMyAssignmentStatus(action: any): any {
+  debugger
   const id = action.payload.assessmentId
-  const body = { status: action.payload.status , submittedTime : action.payload.submittedTime };
+  const body = { status: action.payload.status, submittedTime: action.payload.submittedTime, studentId: action.payload.studentId };
   const requestURL = `${API_BASE_URL}${MYASSIGNMENTSTATUS}/${id}`;
   let token = authToken();
   const params = {
     method: "PUT",
     body: JSON.stringify({ params: encrypt(JSON.stringify(body)) }),
-    headers: { "Content-Type": "application/json" , ...(token && {token}) },
+    headers: { "Content-Type": "application/json", ...(token && { token }) },
   };
   try {
+    debugger
     const res = yield call(request, requestURL, params);
     yield put(
       updateMyAssignmentStatusSuccess(res)
@@ -176,7 +178,7 @@ function* fetchMyCustomAssignmentFormDataSaga(action: any): any {
   let token = authToken();
   const params = {
     method: "GET",
-    headers: { "Content-Type": "application/json",...(token && {token})},
+    headers: { "Content-Type": "application/json", ...(token && { token }) },
   };
   try {
     const res = yield call(request, requestURL, params);
@@ -194,12 +196,12 @@ export function* getMyGradesWatcher() {
   yield takeLatest(GET_MYGRADES_REQUEST, fetchMyGradesDataSaga);
 }
 function* fetchMyGradesDataSaga(action: any): any {
-  const {studentId} = action.payload
+  const { studentId } = action.payload
   const requestURL = `${API_BASE_URL}${MyGRADES}/${studentId}`;
   let token = authToken();
   const params = {
     method: "GET",
-    headers: { "Content-Type": "application/json",...(token && {token})},
+    headers: { "Content-Type": "application/json", ...(token && { token }) },
   };
   try {
     const res = yield call(request, requestURL, params);
@@ -225,7 +227,7 @@ function* updateAssignmentSubmissionDate(action: any): any {
   const params = {
     method: "PUT",
     body: JSON.stringify({ params: encrypt(JSON.stringify(body)) }),
-    headers: { "Content-Type": "application/json" , ...(token && {token}) },
+    headers: { "Content-Type": "application/json", ...(token && { token }) },
   };
   try {
     const res = yield call(request, requestURL, params);
@@ -239,6 +241,6 @@ function* updateAssignmentSubmissionDate(action: any): any {
   }
 }
 
-let exportArr = [getMyAssignmentWatcher,getMyAssignmentDetailWatcher, getMyAssignmentStatusWatcher, postMyAssignmentStatusWatcher, updateMyAssignmentStatusWatcher, getMyCustomAssignmentFormWatcher, getMyGradesWatcher, updateAssignmentSubmissionDateWatcher]
+let exportArr = [getMyAssignmentWatcher, getMyAssignmentDetailWatcher, getMyAssignmentStatusWatcher, postMyAssignmentStatusWatcher, updateMyAssignmentStatusWatcher, getMyCustomAssignmentFormWatcher, getMyGradesWatcher, updateAssignmentSubmissionDateWatcher]
 
 export default exportArr;

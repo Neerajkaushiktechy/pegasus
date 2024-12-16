@@ -3,6 +3,7 @@ const AssessmentTool = require("../../database/models/assessmentTool");
 const AssessmentGroupTool = require("../../database/models/assessmentGroup");
 const StudentAssignmentStatus = require("../../database/models/studentAssignmentStatus");
 const Patient = require("../../database/models/patientDemographic");
+const Student = require("../../database/models/student");
 const Users = require("../../database/models/user");
 const CustomFrom = require("../../database/models/customForm");
 const mongoose = require('mongoose')
@@ -46,6 +47,8 @@ exports.getMyAssignment = async (req, res) => {
         select: 'fName lName',
       }).sort({ createdAt: -1 });
 
+    const studentData = await Student.findById({ _id: req.params.studentId });
+
     if (!assignment) {
       return res.status(404).json({
         success: false,
@@ -55,7 +58,7 @@ exports.getMyAssignment = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: 'Assignment fetched successfully',
-      data: assignment, myAssignment
+      data: assignment, myAssignment, studentData
     });
   } catch (error) {
     console.error('Error while fetching assignment', error);
@@ -168,7 +171,11 @@ exports.updateMyAssignmentStatus = async (req, res) => {
     let {
       status,
     } = req.body;
-    await StudentAssignmentStatus.updateOne({ _id: req.params.id, studentId: req.userId, }, { status: status, submittedTime: req.body.submittedTime });;
+    if (req.roleId === 1) {
+      await StudentAssignmentStatus.updateOne({ _id: req.params.id, studentId: req.body.studentId, }, { status: status, submittedTime: req.body.submittedTime });
+      return res.status(200).json({ success: true, message: "My Assignment Status is Updated" });
+    }
+    await StudentAssignmentStatus.updateOne({ _id: req.params.id, studentId: req.userId, }, { status: status, submittedTime: req.body.submittedTime });
     return res.status(200).json({ success: true, message: "My Assignment Satus is Updated" });
   } catch (error) {
     console.log(error);
