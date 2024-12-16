@@ -5,9 +5,11 @@ import { useEffect, useState } from "react";
 import Loader from "../../../../../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchMyAssignmentDataRequest, fetchMyGradesDataRequest } from "../../../../../redux/modules/studentView/myAssignments/action";
+import { fetchMyAssignmentDataRequest, fetchMyGradesDataRequest, updateMyAssignmentStatusRequest } from "../../../../../redux/modules/studentView/myAssignments/action";
 import { clearDialouge } from "../../../../../redux/modules/patients/daignosis/action";
 import DialogBox from "../../../../../components/DialogBox";
+import IconButton from '@mui/material/IconButton';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { encrypt } from "../../../../..//utils/encryptDecrypt";
 import { getUserId, getRole } from "../../../../../utils/commonUtil";
 import { assert } from "console";
@@ -40,11 +42,13 @@ export default function MyAssignmentList() {
         show: false,
         message: ""
     });
+    const [openDialog, setOpenDialog] = useState(false);
+    const [assessmentId, setAssessmentId] = useState('');
     const [myAssignmentData, setMyAssignmentData] = useState();
     let tableHead =
         getRole() === 2
             ? ["Assignment Title", "Patient Name", "Module", "Duration(HH:MM)", "Status"]
-            : ["Assignment Title", "Assigned Date", "Submitted Date", "Module", "Total Duration(HH:MM)", "Time Taken", "Status"];
+            : ["Assignment Title", "Assigned Date", "Submitted Date", "Module", "Total Duration(HH:MM)", "Time Taken", "Status", "Reset"];
 
     let dispatch = useDispatch();
     let { getMyAssignmentData, diagnosis, getMyGradesData } = useSelector((state: any) => {
@@ -119,7 +123,21 @@ export default function MyAssignmentList() {
     if (getMyAssignmentData.loading) {
         return <Loader />
     }
-    console.log(myAssignmentData, "myasssigndatat")
+
+    const handleReset = () => {
+        let studentId: any = id
+        dispatch(updateMyAssignmentStatusRequest({ studentId: atob(studentId), assessmentId, status: 0 }))
+        dispatch(fetchMyAssignmentDataRequest({ studentId: atob(studentId) }))
+        setOpenDialog(false);
+    }
+
+    const calculateDateDifference = (submittedDate: any) => {
+        const dateNow = new Date();
+        const endDate = new Date(submittedDate);
+        const diffTime = Math.abs(endDate?.getTime() - dateNow.getTime()); // Get the difference in milliseconds
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+        return diffDays;
+    };
 
     return (
         <>
@@ -131,7 +149,7 @@ export default function MyAssignmentList() {
                     spacing={2}
                     sx={{ marginBottom: "20px" }}
                 >
-                    <Typography>{getRole() === 2 ? "My Assignment" : "Student Assignment"}</Typography>
+                    <Typography>{getRole() === 2 ? "My Assignment" : getMyAssignmentData?.data?.studentData?.fName+" Assignment"}</Typography>
                 </Stack >
                 <TableList tableHead={tableHead} type={true}>
                     {getRole() === 2 ? (
@@ -177,6 +195,10 @@ export default function MyAssignmentList() {
                                         .duration}</StyledTableCell>
                                     <StyledTableCell align="center">{data.status === 2 ? data.submittedTime : "Not Yet"}</StyledTableCell>
                                     <StyledTableCell align="center">{getStatus(data.status)}</StyledTableCell>
+                                    <StyledTableCell align="center" sx={{ cursor: `${i === 0 && data.status === 2 && calculateDateDifference(data?.updatedAt) <= 365 ? 'pointer' : ''}` }}>
+                                        <IconButton className={`${i === 0 && data.status === 2 && calculateDateDifference(data?.updatedAt) <= 365 ? '' : 'disabledCell'}`} onClick={() => { setOpenDialog(true); setAssessmentId(data._id) }} aria-label="reset">
+                                            <RestartAltIcon sx={{ color: `${i === 0 && data.status === 2 && calculateDateDifference(data?.updatedAt) <= 365 ? '#32CD32' : ''}` }} />
+                                        </IconButton></StyledTableCell>
                                 </StyledTableRow>
                             ))
                         ) : (
@@ -196,6 +218,7 @@ export default function MyAssignmentList() {
 
             </>
             <DialogBox buttonIcon={showDialouge.message === "There is some error please try again later" || showDialouge.message === "Please fill required fields" ? "error" : ""} openDialog={showDialouge.show} handleSubmit={handleCloseDialog} title={showDialouge.message} buttonText="Ok" />
+            <DialogBox buttonIcon={"delete"} openDialog={openDialog} handleSubmit={() => handleReset()} handleClose={() => setOpenDialog(false)} title={'Are you sure want to reset the assignment?'} />
         </>
     )
 }

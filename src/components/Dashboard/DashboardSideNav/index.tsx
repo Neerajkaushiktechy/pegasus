@@ -228,6 +228,8 @@ const DashboardSideNav = ({ open, mobileView }: props) => {
          navList.forEach((item, index) => {
             if (location.pathname.includes('/patientInformation/') && item.navLink === "/patients") {
                mainIndex = index
+            } else if (location.pathname.includes('/myAssignment/') && item.navLink === "/students") {
+               mainIndex = index
             }
             else if (item.navLink === location.pathname) {
                mainIndex = index
